@@ -133,6 +133,7 @@ class Recommender():
         totalDuration = 0
 
         for show in self.__showDict.values():
+            # add ratings to rating dict
             if show.getShow() == "Movie":
                 rating = show.getRating()
                 if rating not in ratingDict:
@@ -141,14 +142,14 @@ class Recommender():
                     ratingDict[rating] += 1
 
                 duration = show.getDuration().split(" ")
-               
+               # verify the show has a duration and add to total
                 if len(duration) == 2 and "min" in duration[1]:
                     try:
                         totalDuration += int(duration[0])
                         totalMovies += 1
                     except ValueError:
                         pass
-
+                # iterate through directors, actors, and genres and add to the dict and increment value
                 director = show.getDirectors()
                 if director.strip():
                     if director not in directorsDict:
@@ -174,23 +175,24 @@ class Recommender():
 
         totalShows = sum(ratingDict.values())
 
+        #calculate rating percentages
         for rating, count in ratingDict.items():
             percentage = (count / totalShows) * 100
             ratingPercentages[rating] = "{:.2f}".format(percentage)
-
+        #avergae movie duration
         if totalMovies > 0:
             avgDuration = totalDuration / totalMovies
         else:
             avgDuration = 0
-
+        #most frequent director
         maxDirector = None
         if directorsDict:
             maxDirector = max(directorsDict, key=directorsDict.get)
-
+        #most frequent actor
         maxActor = None
         if actorsDict:
             maxActor = max(actorsDict, key=actorsDict.get)
-
+        #most frequent genre
         maxGenre = None
         if genreDict:
             maxGenre = max(genreDict, key=genreDict.get)
@@ -202,7 +204,7 @@ class Recommender():
         totalSeasons = 0
         actorsDict = {}
         ratingPercentages = {}
-
+        # add ratings to rating dict
         for show in self.__showDict.values():
             if show.getShow() == "TV Show":
                 rating = show.getRating()
@@ -210,7 +212,7 @@ class Recommender():
                     ratingDict[rating] = 1
                 else:
                     ratingDict[rating] += 1
-
+                # calculate total num of seasons
                 duration = show.getDuration().split(" ")
                 if len(duration) == 2 and "Season" in duration[1]:
                     try:
@@ -218,7 +220,7 @@ class Recommender():
                         totalSeasons += num_seasons
                     except ValueError:
                         pass
-
+                # add and increment the actors into dict
                 actors = show.getActors().split("\\")
                 for actor in actors:
                     if actor.strip():
@@ -228,16 +230,16 @@ class Recommender():
                             actorsDict[actor] += 1
 
         totalShows = sum(ratingDict.values())
-       
+       # calulate rating percentages
         for rating, count in ratingDict.items():
             percentage = (count / totalShows) * 100
             ratingPercentages[rating] = "{:.2f}".format(percentage)
-
+        #average seasons
         if totalShows > 0:
             avgSeasons = totalSeasons / totalShows
         else:
             avgSeasons = 0
-
+        #most frequent actor
         maxActor = None
         if actorsDict:
             maxActor = max(actorsDict, key=actorsDict.get)
@@ -251,12 +253,13 @@ class Recommender():
         publishersDict = {}
 
         for book in self.__bookDict.values():
+            #total num of pages
             pageCount = book.getNumPages()
             try:
                 pageCountTotal += int(pageCount)
             except ValueError:
                 pass
-
+            #add authors to author dict
             authors = book.getAuthors().split("\\")  
             for author in authors:
                 if author.strip():
@@ -264,7 +267,7 @@ class Recommender():
                         authorsDict[author] = 1
                     else:
                         authorsDict[author] += 1
-
+            #add publishes to publisher dict
             publisher = book.getPublisher()  
             if publisher:  
                 if publisher not in publishersDict:
@@ -274,16 +277,16 @@ class Recommender():
 
 
         totalBooks = len(self.__bookDict)
-
+        #average num of pages
         if totalBooks > 0:
             avgPageCount = pageCountTotal / totalBooks  
         else:
             avgPageCount = 0
-
+        #most frequent author
         maxAuthor = None
         if authorsDict:
             maxAuthor = max(authorsDict, key=authorsDict.get)
-
+        #most frequent publisher
         maxPublisher = None
         if publishersDict:
             maxPublisher = max(publishersDict, key=publishersDict.get)
@@ -296,16 +299,17 @@ class Recommender():
         maxDirectorLen = 0
         maxActorLen = 0
         maxGenreLen = 0
+        #check for type
         if typeOf not in ["Movie", "TV Show"]:
             tkinter.messagebox.showerror("Error", "This is not a valid type. Pick TV Show or Movie.")
             return "No Results"
-
+        # generate error in no info entered
         if not (title or director or actor or genre):
             tkinter.messagebox.showerror("Error", "No valid information entered. Please enter information for Title, Director, Actor, and/or Genre.")
             return "No Results"
         
         shows = []
- 
+        #add matching shows to dict
         for show in self.__showDict.values():
             if (typeOf == "Movie" and show.getShow() == "Movie") or (typeOf == "TV Show" and show.getShow() == "TV Show"):
                 if (title.lower() in show.getTitle().lower()) and (director.lower() in show.getDirectors().lower()) and (actor.lower() in show.getActors().lower()) and (genre.lower() in show.getGenres().lower()):
@@ -314,6 +318,7 @@ class Recommender():
         if len(shows) ==0:
             return "No Results"
         
+        #formatting
         for show in shows:
             titleLen = len(show.getTitle())
             directorLen = len(show.getDirectors())
@@ -326,7 +331,7 @@ class Recommender():
             maxGenreLen = max(maxGenreLen, genreLen)
 
         showStr = f"{'Title':<{maxTitleLen}}  {'Director':<{maxDirectorLen}}  {'Actors':<{maxActorLen}}  {'Genre':<{maxGenreLen}}\n"
-
+        #add to output string
         for show in shows:
             showStr += f"{show.getTitle():<{maxTitleLen}}  {show.getDirectors():<{maxDirectorLen}}  {show.getActors():<{maxActorLen}}  {show.getGenres():<{maxGenreLen}}\n"
         return showStr
@@ -335,20 +340,21 @@ class Recommender():
         maxTitleLen = 0
         maxAuthorLen = 0
         maxPublisherLen = 0
-        
+        # throw error for no info
         if not (title or author or publisher):
             tkinter.messagebox.showerror("Error", "No valid information entered. Please enter information for Title, Author, and/or Publisher.")
             return "No Results"
 
         books = []
-
+        #append matching books
         for book in self.__bookDict.values():
             if (title.lower() in book.getTitle().lower()) and (author.lower() in book.getAuthors().lower()) and (publisher.lower() in book.getPublisher().lower()):
                 books.append(book)
 
         if len(books) == 0:
             return "No Results"
-
+        
+        #formatting 
         for book in books:
             titleLen = len(book.getTitle())
             authorLen = len(book.getAuthors())
@@ -359,7 +365,7 @@ class Recommender():
             maxPublisherLen = max(maxPublisherLen, publisherLen)
 
         bookStr = f"{'Title':<{maxTitleLen}}  {'Author':<{maxAuthorLen}}  {'Publisher':<{maxPublisherLen}}\n"
-
+        #book string to output
         for book in books:
             bookStr += f"{book.getTitle():<{maxTitleLen}}  {book.getAuthors():<{maxAuthorLen}}  {book.getPublisher():<{maxPublisherLen}}\n"
 
