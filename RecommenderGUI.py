@@ -162,6 +162,7 @@ class RecommenderGUI:
 Teddy Nueva Espana, Ashna Razdan, and Jacob Bower.
 Completed on 5/5/2024.""") #if done by sat change to 5/4
 
+
     def searchShows(self):
         return
     def searchBooks(self):
