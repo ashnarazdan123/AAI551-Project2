@@ -101,9 +101,10 @@ class Recommender():
                                     # ID2 not key in inner dictionary
                                     self.__associationsDict[id1][id0] = 1
                     file.close()
+                    break
+                    
                 except FileNotFoundError:
                     print("File not found.")
-                    continue
                 
     def getMovieList(self):
         # Return title and runtime of movies
@@ -365,14 +366,109 @@ class Recommender():
         return bookStr
 
         
-   ## def getRecommendations(self):
+    def getRecommendations(self, typeOf, title):
+        
+        assocList = []
+        itemID = 0
+       
+        if typeOf in ["Movie", "TV Show"]:
+           maxTitleLen = 0
+           maxAuthorLen = 0
+           
+           # search show dictionary
+           for show in self.__showDict.values():
+               if title.lower() in show.getTitle().lower():
+                # title is in dictionary
+                # get title ID
+                    showID = show.getId().lower() # set showID to id of desired show
+           if not showID: 
+            # title not in dictionary
+                tkinter.messagebox.showerror("Error", "No recommendations for that title")
+                return "No Results" 
+        
+        # go through associations dictionary
+        
+        # Associations Dictionary -> (ID {KEY} -> (ID {KEY} -> Count{VALUE}) {VALUE})
+           for item in self.__associationsDict.keys(): #Iterate through associations Keys
+               if showID == item:                       # if showID found in associationDict 
+                   assocID = self.__associationsDict[item]    # assoc ID set to dictionary
+            
+        # Find associated books with assocID
+           for item in self.__associationsDict.keys(): # Item referring to associated book object ID
+               for book in self.__bookDict.values():  # Iterate through bookDict
+                   if book.getId() == item:  # If bookDict ID matches associated book objectID
+                       assocList.append(book) # append assocList with associated book objects
+                       
+           for item in assocList:
+                titleLen = len(item.getTitle())
+                authorLen = len(item.getAuthors())
+
+                maxTitleLen = max(maxTitleLen, titleLen)
+                maxAuthorLen = max(maxAuthorLen, authorLen)
+                
+           bookRec = f"{'Title':<{maxTitleLen}}  {'Author':<{maxAuthorLen}}\n"
+           for book in assocList:
+                bookRec += f"{book.getTitle():<{maxTitleLen}}  {book.getAuthors():<{maxAuthorLen}}\n"    
+           return bookRec
+           
+           
+        elif typeOf in ["Book"]:
+           maxTitleLen = 0
+           maxDirectorLen = 0
+           maxActorLen = 0
+           maxGenreLen = 0
+           # search book dictionary for desired book 
+           for book in self.__bookDict.values():
+               if title.lower() in book.getTitle().lower():
+                    bookID = book.getId().lower() #store bookID to search association dict
+                
+           if not bookID: # title not in dictionary
+                tkinter.messagebox.showerror("Error", "No recommendations for that title")
+                return "No Results"    
+                
+           # search association dict for desired association ID     
+           for item in self.__associationsDict.keys():
+                if bookID == item:
+                    # if bookID matches ID of item access dictionary containing the associations to book ID
+                    assocID = self.__associationsDict[item] # assocID given the dictionary containing the associated IDs and their values
+                    # assocID -> contains ID's of shows and movies associated with given book
+            
+        # Find associated shows with assocID
+           for item in assocID.keys():
+               for show in self.__showDict.values():
+                   if show.getId() == item: #item (associated shows ID) found in showDict
+                       assocList.append(show) #append assocList with associated show object
+           
+           for show in assocList:
+               # Find max length for all object lines
+                titleLen = len(show.getTitle())
+                directorLen = len(show.getDirectors())
+                actorLen = len(show.getActors())
+                genreLen = len(show.getGenres())
+
+                maxTitleLen = max(maxTitleLen, titleLen)
+                maxDirectorLen = max(maxDirectorLen, directorLen)
+                maxActorLen = max(maxActorLen, actorLen)
+                maxGenreLen = max(maxGenreLen, genreLen)
+                       
+           showRec = f"{'Title':<{maxTitleLen}}  {'Director':<{maxDirectorLen}}  {'Actors':<{maxActorLen}}  {'Genre':<{maxGenreLen}}\n"
+           for show in assocList:
+                showRec += f"{show.getTitle():<{maxTitleLen}}  {show.getDirectors():<{maxDirectorLen}}  {show.getActors():<{maxActorLen}}  {show.getGenres():<{maxGenreLen}}\n"    
+           return showRec
+               
 def main():
     #just to test functions will delete later 
 
     recommender = Recommender()
     recommender.loadBooks()
-    result = recommender.searchBooks(title="",author="William Shakespeare",publisher="")
+    recommender.loadShows()
+    recommender.loadAssociations()
+    result = recommender.getRecommendations(typeOf="TV Show", title="Swamp People")
+    result2 = recommender.getRecommendations(typeOf="Book", title="The Hotel New Hampshire")
+    # result = recommender.searchBooks(title="",author="Frank Herbert",publisher="")
     print(result)
+    print(result2)
+    
 
 if __name__ == "__main__":
     main()
