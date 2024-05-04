@@ -290,24 +290,89 @@ class Recommender():
 
         return "{:.2f}".format(avgPageCount), maxAuthor, maxPublisher
 
+    def searchTVMovies(self, typeOf, title, director, actor, genre):
+        maxTitleLen = 0
+        maxDirectorLen = 0
+        maxActorLen = 0
+        maxGenreLen = 0
+        if typeOf not in ["Movie", "TV Show"]:
+            tkinter.messagebox.showerror("Error", "This is not a valid type. Pick TV Show or Movie.")
+            return "No Results"
 
+        if not (title or director or actor or genre):
+            tkinter.messagebox.showerror("Error", "No valid information entered. Please enter information for Title, Director, Actor, and/or Genre.")
+            return "No Results"
         
-   ## def searchTVMovies(self):
+        shows = []
+ 
+        for show in self.__showDict.values():
+            if (typeOf == "Movie" and show.getShow() == "Movie") or (typeOf == "TV Show" and show.getShow() == "TV Show"):
+                if (title.lower() in show.getTitle().lower()) and (director.lower() in show.getDirectors().lower()) and (actor.lower() in show.getActors().lower()) and (genre.lower() in show.getGenres().lower()):
+                    shows.append(show)
         
-  ##  def searchBooks(self):
+        if len(shows) ==0:
+            return "No Results"
+        
+        for show in shows:
+            titleLen = len(show.getTitle())
+            directorLen = len(show.getDirectors())
+            actorLen = len(show.getActors())
+            genreLen = len(show.getGenres())
+
+            maxTitleLen = max(maxTitleLen, titleLen)
+            maxDirectorLen = max(maxDirectorLen, directorLen)
+            maxActorLen = max(maxActorLen, actorLen)
+            maxGenreLen = max(maxGenreLen, genreLen)
+
+        showStr = f"{'Title':<{maxTitleLen}}  {'Director':<{maxDirectorLen}}  {'Actors':<{maxActorLen}}  {'Genre':<{maxGenreLen}}\n"
+
+        for show in shows:
+            showStr += f"{show.getTitle():<{maxTitleLen}}  {show.getDirectors():<{maxDirectorLen}}  {show.getActors():<{maxActorLen}}  {show.getGenres():<{maxGenreLen}}\n"
+        return showStr
+        
+    def searchBooks(self, title, author, publisher):
+        maxTitleLen = 0
+        maxAuthorLen = 0
+        maxPublisherLen = 0
+        
+        if not (title or author or publisher):
+            tkinter.messagebox.showerror("Error", "No valid information entered. Please enter information for Title, Author, and/or Publisher.")
+            return "No Results"
+
+        books = []
+
+        for book in self.__bookDict.values():
+            if (title.lower() in book.getTitle().lower()) and (author.lower() in book.getAuthors().lower()) and (publisher.lower() in book.getPublisher().lower()):
+                books.append(book)
+
+        if len(books) == 0:
+            return "No Results"
+
+        for book in books:
+            titleLen = len(book.getTitle())
+            authorLen = len(book.getAuthors())
+            publisherLen = len(book.getPublisher())
+
+            maxTitleLen = max(maxTitleLen, titleLen)
+            maxAuthorLen = max(maxAuthorLen, authorLen)
+            maxPublisherLen = max(maxPublisherLen, publisherLen)
+
+        bookStr = f"{'Title':<{maxTitleLen}}  {'Author':<{maxAuthorLen}}  {'Publisher':<{maxPublisherLen}}\n"
+
+        for book in books:
+            bookStr += f"{book.getTitle():<{maxTitleLen}}  {book.getAuthors():<{maxAuthorLen}}  {book.getPublisher():<{maxPublisherLen}}\n"
+
+        return bookStr
+
         
    ## def getRecommendations(self):
 def main():
     #just to test functions will delete later 
-    recommender = Recommender()
 
-   
+    recommender = Recommender()
     recommender.loadBooks()
-    book_stats = recommender.getBookStats()
-    print("\nBook Stats:")
-    print("Average Page Count:", book_stats[0])
-    print("Most Frequent Author:", book_stats[1])
-    print("Most Frequent Publisher:", book_stats[2])
+    result = recommender.searchBooks(title="",author="William Shakespeare",publisher="")
+    print(result)
 
 if __name__ == "__main__":
     main()
