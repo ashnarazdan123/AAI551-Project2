@@ -23,9 +23,10 @@ class Recommender():
                     with open(path, 'r') as file:
                         for line in file:
                             line = line.strip().split(',')
-                            if len(line) < 11:
+                            if len(line) != 11:
                                 print("Invalid format in line:", line)
-                                continue
+                                tkinter.messagebox.showerror("Error", "Invalid Books File")
+                                break
                             newBook = Book(line[0], line[1], line[3], line[2], line[4], line[5], line[6], line[7], line[8], line[9], line[10])
                             self.__bookDict[newBook.getId()] = newBook
                     file.close()
@@ -33,7 +34,6 @@ class Recommender():
                 except FileNotFoundError:
                     print("File not found.")
                     continue
-                    
     def loadShows(self):
         root = tkinter.Tk()
         root.withdraw()
@@ -48,6 +48,9 @@ class Recommender():
                     with open(path, 'r') as file:
                         for line in file:
                             line = line.strip().split(',')
+                            if len(line) != 13:
+                                tkinter.messagebox.showerror("Error", "Invalid Shows File")
+                                break
                             #show_id,type,title,director,cast,average_rating,country,date_added,release_year,rating,duration,listed_in,description
                             newShow = Show(line[0], line[2], line[5], line[1], line[3], line[4], line[6], line[7], line[8], line[9], line[10], line[11], line[12])  
                             self.__showDict[newShow.getId()] = newShow
@@ -70,7 +73,12 @@ class Recommender():
                 try:
                     with open(path, 'r') as file:
                         for line in file:
+                            
+                            if len(line.strip().split(',')) != 2:
+                                tkinter.messagebox.showerror("Error", "Invalid Associations File")
+                                break
                             id0, id1 = line.strip().split(',')
+
                             #line[0] = ID 1, line[1] = ID 2
                             
                             # ===== USING ID0 AS OUTER DICT =====
@@ -158,6 +166,7 @@ class Recommender():
         
         books = []
         for item in self.__bookDict.values():
+            if item.getId() != "bookID":
                 books.append(item)
         
         for book in books:
@@ -166,6 +175,7 @@ class Recommender():
             
             maxTitleLen = max(maxTitleLen, titleLen)
             maxAuthorLen = max(maxAuthorLen, authorLen)
+        
         bookStr = f"{'Title':<{maxTitleLen}}  {'Author:':<{maxAuthorLen}}\n" 
         
         for book in books:
@@ -425,22 +435,23 @@ class Recommender():
         
         assocList = []
         itemID = 0
+        showID = 0 
        
         if typeOf in ["Movie", "TV Show"]:
            maxTitleLen = 0
            maxAuthorLen = 0
-           
+           showTitleList = []
            # search show dictionary
            for show in self.__showDict.values():
+               showTitleList.append(show.getTitle().lower())
                if title.lower() in show.getTitle().lower():
                 # title is in dictionary
                 # get title ID
                     showID = show.getId().lower() # set showID to id of desired show
-           if not showID: 
-            # title not in dictionary
+           #Title not in list
+           if title.lower() not in showTitleList:
                 tkinter.messagebox.showerror("Error", "No recommendations for that title")
-                return "No Results" 
-        
+                return "No Results"   
         # go through associations dictionary
         
         # Associations Dictionary -> (ID {KEY} -> (ID {KEY} -> Count{VALUE}) {VALUE})
@@ -449,7 +460,7 @@ class Recommender():
                    assocID = self.__associationsDict[item]    # assoc ID set to dictionary
             
         # Find associated books with assocID
-           for item in self.__associationsDict.keys(): # Item referring to associated book object ID
+           for item in assocID.keys(): # Item referring to associated book object ID
                for book in self.__bookDict.values():  # Iterate through bookDict
                    if book.getId() == item:  # If bookDict ID matches associated book objectID
                        assocList.append(book) # append assocList with associated book objects
@@ -471,12 +482,15 @@ class Recommender():
            maxDirectorLen = 0
            maxActorLen = 0
            maxGenreLen = 0
+           bookID = 0
+           bookTitleList = []
            # search book dictionary for desired book 
            for book in self.__bookDict.values():
+               bookTitleList.append(book.getTitle().lower())
                if title.lower() in book.getTitle().lower():
                     bookID = book.getId().lower() #store bookID to search association dict
                 
-           if not bookID: # title not in dictionary
+           if title.lower() not in bookTitleList: # title not in dictionary
                 tkinter.messagebox.showerror("Error", "No recommendations for that title")
                 return "No Results"    
                 
