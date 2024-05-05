@@ -255,14 +255,20 @@ class Recommender():
         maxGenre = None
         if genreDict:
             maxGenre = max(genreDict, key=genreDict.get)
+        movieStats = "Ratings: \n"
+        for rating, percentage in ratingPercentages.items():
+            movieStats += f"{rating}: {percentage}%\n"
 
-        return ratingPercentages, "{:.2f}".format(avgDuration), maxDirector, maxActor, maxGenre
+        movieStats += f"Avg Duration:{avgDuration:.2f} minutes \nMax Director: {maxDirector}\nMax Actor: {maxActor}\nMax Genre: {maxGenre}"
+
+        return movieStats
 
     def getTVStats(self):
         ratingDict = {}
         totalSeasons = 0
         actorsDict = {}
         ratingPercentages = {}
+        genreDict={}
         # add ratings to rating dict
         for show in self.__showDict.values():
             if show.getShow() == "TV Show":
@@ -287,6 +293,15 @@ class Recommender():
                             actorsDict[actor] = 1
                         else:
                             actorsDict[actor] += 1
+                # calculate genres
+                genres = show.getGenres().split("\\")
+                for genre in genres:
+                    genre = genre.strip()
+                    if genre:
+                        if genre not in genreDict:
+                            genreDict[genre] = 1
+                        else:
+                            genreDict[genre] += 1
 
         totalShows = sum(ratingDict.values())
        # calulate rating percentages
@@ -302,8 +317,19 @@ class Recommender():
         maxActor = None
         if actorsDict:
             maxActor = max(actorsDict, key=actorsDict.get)
+        
+        #most frequent genre
+        maxGenre = None
+        if genreDict:
+            maxGenre = max(genreDict, key=genreDict.get)
 
-        return ratingPercentages, "{:.2f}".format(avgSeasons), maxActor
+        tvStats = "Ratings:\n"
+        for rating, percentage in ratingPercentages.items():
+            tvStats += f"{rating}: {percentage}%\n"
+
+        tvStats += f"Average Number of Seasons: {avgSeasons:.2f} seasons \nMost Frequent Actor: {maxActor}\nMost Frequent Genre: {maxGenre}"
+
+        return tvStats
 
     
     def getBookStats(self):
@@ -349,13 +375,13 @@ class Recommender():
         maxPublisher = None
         if publishersDict:
             maxPublisher = max(publishersDict, key=publishersDict.get)
-
-
-        return "{:.2f}".format(avgPageCount), maxAuthor, maxPublisher
+        bookStats = ""
+        bookStats += f"Average number of pages: {avgPageCount:.2f} pages\nMost Frequent Author: {maxAuthor}\nMost Frequent Publisher: {maxPublisher}"
+        return bookStats
 
     def searchTVMovies(self, typeOf, title, director, actor, genre):
         maxTitleLen = 0
-        maxDirectorLen = 0
+        maxDirectorLen = 8
         maxActorLen = 0
         maxGenreLen = 0
         #check for type

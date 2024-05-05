@@ -136,7 +136,7 @@ class RecommenderGUI:
         self.__buttonLS.pack(side=tkinter.LEFT,padx=80)
         self.__buttonLB = tkinter.Button(self.__buttonFrame, text="Load Books", command=self.loadBooks)
         self.__buttonLB.pack(side=tkinter.LEFT, padx=80)
-        self.__buttonLR = tkinter.Button(self.__buttonFrame, text="Load Recomandations", command=self.loadAssociations)
+        self.__buttonLR = tkinter.Button(self.__buttonFrame, text="Load Recommendations", command=self.loadAssociations)
         self.__buttonLR.pack(side=tkinter.LEFT,padx=80)
         self.__buttonInfo = tkinter.Button(self.__buttonFrame, text="Information", command=self.creditInfoBox)
         self.__buttonInfo.pack(side=tkinter.LEFT, padx=80)
