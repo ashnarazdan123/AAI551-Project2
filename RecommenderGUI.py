@@ -65,7 +65,7 @@ class RecommenderGUI:
         self.__entryActor = tkinter.Entry(self.__searchTVM, width=50)
         self.__genreLabel = tkinter.Label(self.__searchTVM, text="Genre:")
         self.__entryGenreTVM = tkinter.Entry(self.__searchTVM, width=50)
-        self.__buttonTVM = tkinter.Button(self.__searchTVM, text="Search", padx=7) #,command=searchShows
+        self.__buttonTVM = tkinter.Button(self.__searchTVM, text="Search", padx=7) #,command=self.searchShows
 
         #packing for search tv/movies
         self.__typeLabel.grid(row=0, column=0, sticky=tkinter.W)
@@ -94,7 +94,7 @@ class RecommenderGUI:
         self.__entryAuthor = tkinter.Entry(self.__searchB, width=50)
         self.__publisherLabel = tkinter.Label(self.__searchB, text="Publisher:")
         self.__entryPublisher = tkinter.Entry(self.__searchB, width=50)
-        self.__buttonB = tkinter.Button(self.__searchB, text="Search", padx=7) # ,command=searchBooks
+        self.__buttonB = tkinter.Button(self.__searchB, text="Search", padx=7) # ,command=self.searchBooks
 
         #packing for search books
         self.__titleLabelB.grid(row=0, column=0, sticky=tkinter.W)
@@ -118,13 +118,13 @@ class RecommenderGUI:
         self.__cbR = ttk.Combobox(self.__recTab, values=self.__optionsR)
         self.__titleLabelR = tkinter.Label(self.__recTab, text="Title:")
         self.__entryTitleR = tkinter.Entry(self.__recTab, width=50)
-        self.__buttonR = tkinter.Button(self.__recTab, text="Get Recommendation", command=self.getRecommendations) #, command=getRecommendations
+        self.__buttonR = tkinter.Button(self.__recTab, text="Get Recommendation", command=self.getRecommendations)
 
         self.__typeLabelR.grid(row=0, column=0, sticky=tkinter.W)
         self.__cbR.grid(row=0, column=1, sticky=tkinter.W)
         self.__titleLabelR.grid(row=1, column=0, sticky=tkinter.W)
         self.__entryTitleR.grid(row=1, column=1, sticky=tkinter.W)
-        self.__buttonR.grid(row=2, column=1, sticky=tkinter.W)  # ,command=searchBooks
+        self.__buttonR.grid(row=2, column=1, sticky=tkinter.W)  # ,command=self.searchBooks
         self.__textR.grid(row=3, column=1, sticky="nsew")
         self.__recTab.grid_rowconfigure(3, weight=1)
         self.__recTab.grid_columnconfigure(1, weight=1)
@@ -132,11 +132,11 @@ class RecommenderGUI:
         #function buttons
         self.__buttonFrame = tkinter.Frame(self.__main_window)
         self.__buttonFrame.pack(side=tkinter.BOTTOM,pady=10)
-        self.__buttonLS = tkinter.Button(self.__buttonFrame, text="Load Shows", command=self.loadShows) #, command=loadShows
+        self.__buttonLS = tkinter.Button(self.__buttonFrame, text="Load Shows", command=self.loadShows) #
         self.__buttonLS.pack(side=tkinter.LEFT,padx=80)
-        self.__buttonLB = tkinter.Button(self.__buttonFrame, text="Load Books") #, command=loadBooks
+        self.__buttonLB = tkinter.Button(self.__buttonFrame, text="Load Books", command=self.loadBooks)
         self.__buttonLB.pack(side=tkinter.LEFT, padx=80)
-        self.__buttonLR = tkinter.Button(self.__buttonFrame, text="Load Recomandations") #, command=loadAssociations
+        self.__buttonLR = tkinter.Button(self.__buttonFrame, text="Load Recomandations", command=self.loadAssociations)
         self.__buttonLR.pack(side=tkinter.LEFT,padx=80)
         self.__buttonInfo = tkinter.Button(self.__buttonFrame, text="Information", command=self.creditInfoBox)
         self.__buttonInfo.pack(side=tkinter.LEFT, padx=80)
@@ -153,20 +153,51 @@ class RecommenderGUI:
 
     def loadShows(self):
         shows = self.__rec.loadShows()
-        showList = self.__rec.getMovieList()
-        self.__textM.insert(tkinter.END, showList)
-        showStats = self.__rec.getMovieStats()
-        self.__textMavg.insert(tkinter.END, showStats)
-        
-        return
+        movieList = self.__rec.getMovieList()
+        tvList = self.__rec.getTVList()
+
+        #movies
+        self.__textM.configure(state=NORMAL)
+        self.__textM.delete("1.0", tkinter.END)
+        self.__textM.insert(tkinter.END, movieList)
+        movieStats = self.__rec.getMovieStats()
+        self.__textMavg.configure(state=NORMAL)
+        self.__textMavg.delete("1.0", tkinter.END)
+        self.__textMavg.insert(tkinter.END, movieStats)
+        self.__textMavg.configure(state=DISABLED)
+
+        #TV Shows
+        self.__textTV.configure(state=NORMAL)
+        self.__textTV.delete("1.0", tkinter.END)
+        self.__textTV.insert(tkinter.END, tvList)
+        self.__textTV.configure(state=DISABLED)
+        tvStats = self.__rec.getTVStats()
+        self.__textTVavg.configure(state=NORMAL)
+        self.__textTVavg.delete("1.0", tkinter.END)
+        self.__textTVavg.insert(tkinter.END, tvStats)
+        self.__textTVavg.configure(state=DISABLED)
+
     def loadBooks(self):
-        return
+        books = self.__rec.loadBooks()
+        bookList = self.__rec.getBookList()
+        self.__textB.configure(state=NORMAL)
+        self.__textB.delete("1.0",tkinter.END)
+        self.__textB.insert(tkinter.END, bookList)
+        self.__textB.configure(state=DISABLED)
+        bookStats = self.__rec.getBookStats()
+        self.__textBavg.configure(state=NORMAL)
+        self.__textBavg.delete("1.0",tkinter.END)
+        self.__textBavg.insert(tkinter.END, bookStats)
+        self.__textBavg.configure(state=DISABLED)
+
     def loadAssociations(self):
-        return
+       recs = self.__rec.loadAssociations()
+
+
     def creditInfoBox(self):
         messagebox.showinfo(title="Credit Information", message="""Created by
 Teddy Nueva Espana, Ashna Razdan, and Jacob Bower.
-Completed on 5/5/2024.""") #if done by sat change to 5/4
+Completed on 5/5/2024.""")
 
 
     def searchShows(self):
@@ -177,8 +208,11 @@ Completed on 5/5/2024.""") #if done by sat change to 5/4
         title = self.__entryTitleR.get()
         typeOf = self.__cbR.get() 
         recString = self.__rec.getRecommendations(typeOf = typeOf, title = title)
+        self.__textR.configure(state=NORMAL)
+        self.__textR.delete("1.0",tkinter.END)
         self.__textR.insert(tkinter.END, recString)
-        return
+        self.__textR.configure(state=DISABLED)
+
 
 def main():
     gui = RecommenderGUI()
