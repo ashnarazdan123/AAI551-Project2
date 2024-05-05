@@ -205,7 +205,7 @@ class RecommenderGUI:
             
             canvas = FigureCanvasTkAgg(fig, master=self.__ratingsTab)
             canvas.draw()
-            canvas.get_tk_widget().pack()
+            canvas.get_tk_widget().pack(side=tkinter.LEFT, padx=80)
         else:
             print("No movie ratings data available.")
 
@@ -222,7 +222,7 @@ class RecommenderGUI:
             
             canvas = FigureCanvasTkAgg(fig, master=self.__ratingsTab)
             canvas.draw()
-            canvas.get_tk_widget().pack()
+            canvas.get_tk_widget().pack(side=tkinter.LEFT, padx=80)
             
         else:
             print("No TV show ratings data available.")
