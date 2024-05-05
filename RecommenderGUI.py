@@ -3,8 +3,12 @@ from tkinter import ttk
 from tkinter import scrolledtext
 from tkinter import *
 from tkinter import messagebox
+import numpy as np
+import matplotlib
+matplotlib.use('TkAgg')
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import matplotlib.pyplot as plt
 from Recommender import Recommender
-
 
 class RecommenderGUI:
     def __init__(self):
@@ -129,10 +133,14 @@ class RecommenderGUI:
         self.__recTab.grid_rowconfigure(3, weight=1)
         self.__recTab.grid_columnconfigure(1, weight=1)
 
+       #ratings
+        self.__ratingsTab = ttk.Frame(self.__nb)
+        self.__nb.add(self.__ratingsTab, text="Ratings")
+
         #function buttons
         self.__buttonFrame = tkinter.Frame(self.__main_window)
         self.__buttonFrame.pack(side=tkinter.BOTTOM,pady=10)
-        self.__buttonLS = tkinter.Button(self.__buttonFrame, text="Load Shows", command=self.loadShows) #
+        self.__buttonLS = tkinter.Button(self.__buttonFrame, text="Load Shows", command=self.loadShows) 
         self.__buttonLS.pack(side=tkinter.LEFT,padx=80)
         self.__buttonLB = tkinter.Button(self.__buttonFrame, text="Load Books", command=self.loadBooks)
         self.__buttonLB.pack(side=tkinter.LEFT, padx=80)
@@ -153,10 +161,15 @@ class RecommenderGUI:
     def quitButton(self):
         self.__main_window.destroy()
         exit()
+
     def loadShows(self):
         shows = self.__rec.loadShows()
         movieList = self.__rec.getMovieList()
         tvList = self.__rec.getTVList()
+        movieRatings = self.__rec.getMovieRatings()
+        tvRatings = self.__rec.getTVRatings()
+        self.createMovieRatings(movieRatings)
+        self.createTVRatings(tvRatings)
 
         #movies
         self.__textM.configure(state=NORMAL)
@@ -178,6 +191,41 @@ class RecommenderGUI:
         self.__textTVavg.delete("1.0", tkinter.END)
         self.__textTVavg.insert(tkinter.END, tvStats)
         self.__textTVavg.configure(state=DISABLED)
+    
+    def createMovieRatings(self, movieRatings):
+        #create the pie chart for movie ratings
+        if movieRatings:
+            labels = list(movieRatings.keys())
+            values = list(movieRatings.values())
+            
+            fig, ax = plt.subplots(figsize=(5, 5))
+            ax.pie(values, labels=labels, autopct='%1.2f%%')
+            ax.axis('equal')
+            ax.set_title('Movie Ratings')
+            
+            canvas = FigureCanvasTkAgg(fig, master=self.__ratingsTab)
+            canvas.draw()
+            canvas.get_tk_widget().pack()
+        else:
+            print("No movie ratings data available.")
+
+    def createTVRatings(self, TVratings):
+        #create pie chart for tv ratings
+        if TVratings:
+            labels = list(TVratings.keys())
+            values = list(TVratings.values())
+            
+            fig, ax = plt.subplots(figsize=(5, 5))
+            ax.pie(values, labels=labels, autopct='%1.2f%%')
+            ax.axis('equal')
+            ax.set_title('TV Show Ratings')
+            
+            canvas = FigureCanvasTkAgg(fig, master=self.__ratingsTab)
+            canvas.draw()
+            canvas.get_tk_widget().pack()
+            
+        else:
+            print("No TV show ratings data available.")
 
     def loadBooks(self):
         books = self.__rec.loadBooks()

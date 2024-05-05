@@ -59,7 +59,7 @@ class Recommender():
                 except FileNotFoundError:
                     print("File not found.")
                     continue
-    
+
     def loadAssociations(self):
         root = tkinter.Tk()
         root.withdraw()
@@ -181,6 +181,47 @@ class Recommender():
         for book in books:
             bookStr += f"{book.getTitle():<{maxTitleLen}}  {book.getAuthors():<{maxAuthorLen}}\n"
         return bookStr
+    
+    def getMovieRatings(self):
+        ratingDict = {}
+        ratingPercentages ={}
+        
+    # Code to calculate movie ratings percentages
+        for show in self.__showDict.values():
+                    # add ratings to rating dict
+                    if show.getShow() == "Movie":
+                        rating = show.getRating()
+                        if rating not in ratingDict:
+                            ratingDict[rating] = 1
+                        else:
+                            ratingDict[rating] += 1
+
+        totalShows = sum(ratingDict.values())
+                #calculate rating percentages
+        for rating, count in ratingDict.items():
+            percentage = (count / totalShows) * 100
+            ratingPercentages[rating] = "{:.2f}".format(percentage)
+        return ratingPercentages
+
+    def getTVRatings(self):
+        ratingDict = {}
+        ratingPercentages = {}
+
+        # add ratings to rating dict
+        for show in self.__showDict.values():
+            if show.getShow() == "TV Show":
+                rating = show.getRating()
+                if rating not in ratingDict:
+                    ratingDict[rating] = 1
+                else:
+                    ratingDict[rating] += 1
+        totalShows = sum(ratingDict.values())
+         #calculate rating percentages
+        for rating, count in ratingDict.items():
+            percentage = (count / totalShows) * 100
+            ratingPercentages[rating] = "{:.2f}".format(percentage)
+        return ratingPercentages
+
             
     def getMovieStats(self):
         ratingDict = {}
@@ -550,25 +591,4 @@ class Recommender():
                 showRec += f"{show.getTitle():<{maxTitleLen}}  {show.getDirectors():<{maxDirectorLen}}  {show.getActors():<{maxActorLen}}  {show.getGenres():<{maxGenreLen}}\n"    
            return showRec
                
-def main():
-    #just to test functions will delete later 
 
-    recommender = Recommender()
-    recommender.loadBooks()
-    recommender.loadShows()
-    # recommender.loadAssociations()
-    #result = recommender.getRecommendations(typeOf="TV Show", title="Swamp People")
-    #result2 = recommender.getRecommendations(typeOf="Book", title="The Hotel New Hampshire")
-    TVList = recommender.getTVList()
-    MovieList = recommender.getMovieList()
-    BookList = recommender.getBookList()
-    print(TVList)
-    print(MovieList)
-    print(BookList)
-    # result = recommender.searchBooks(title="",author="Frank Herbert",publisher="")
-    #print(result)
-    #print(result2)
-    
-
-if __name__ == "__main__":
-    main()
