@@ -118,7 +118,7 @@ class RecommenderGUI:
         self.__cbR = ttk.Combobox(self.__recTab, values=self.__optionsR)
         self.__titleLabelR = tkinter.Label(self.__recTab, text="Title:")
         self.__entryTitleR = tkinter.Entry(self.__recTab, width=50)
-        self.__buttonR = tkinter.Button(self.__recTab, text="Get Recommendation") #, command=getRecommendations
+        self.__buttonR = tkinter.Button(self.__recTab, text="Get Recommendation", command=self.getRecommendations) #, command=getRecommendations
 
         self.__typeLabelR.grid(row=0, column=0, sticky=tkinter.W)
         self.__cbR.grid(row=0, column=1, sticky=tkinter.W)
@@ -132,7 +132,7 @@ class RecommenderGUI:
         #function buttons
         self.__buttonFrame = tkinter.Frame(self.__main_window)
         self.__buttonFrame.pack(side=tkinter.BOTTOM,pady=10)
-        self.__buttonLS = tkinter.Button(self.__buttonFrame, text="Load Shows") #, command=loadShows
+        self.__buttonLS = tkinter.Button(self.__buttonFrame, text="Load Shows", command=self.loadShows) #, command=loadShows
         self.__buttonLS.pack(side=tkinter.LEFT,padx=80)
         self.__buttonLB = tkinter.Button(self.__buttonFrame, text="Load Books") #, command=loadBooks
         self.__buttonLB.pack(side=tkinter.LEFT, padx=80)
@@ -152,6 +152,12 @@ class RecommenderGUI:
 
 
     def loadShows(self):
+        shows = self.__rec.loadShows()
+        showList = self.__rec.getMovieList()
+        self.__textM.insert(tkinter.END, showList)
+        showStats = self.__rec.getMovieStats()
+        self.__textMavg.insert(tkinter.END, showStats)
+        
         return
     def loadBooks(self):
         return
@@ -168,6 +174,10 @@ Completed on 5/5/2024.""") #if done by sat change to 5/4
     def searchBooks(self):
         return
     def getRecommendations(self):
+        title = self.__entryTitleR.get()
+        typeOf = self.__cbR.get() 
+        recString = self.__rec.getRecommendations(typeOf = typeOf, title = title)
+        self.__textR.insert(tkinter.END, recString)
         return
 
 def main():

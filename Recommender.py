@@ -108,20 +108,69 @@ class Recommender():
                 
     def getMovieList(self):
         # Return title and runtime of movies
-        for item in self.__showDict:
+        maxTitleLen = 0
+        maxDurationLen = 0
+        
+        movies = []
+        for item in self.__showDict.values():
             if item.getShow() == "Movie":
-                print(item.getTitle(), item.getDuration())
+                movies.append(item)
+        
+        for movie in movies:
+            titleLen = len(movie.getTitle())
+            durationLen = len(movie.getDuration())
+            
+            maxTitleLen = max(maxTitleLen, titleLen)
+            maxDurationLen = max(maxDurationLen, durationLen)
+        movieStr = f"{'Title':<{maxTitleLen}}  {'Duration':<{maxDurationLen}}\n" 
+        
+        for movie in movies:
+            movieStr += f"{movie.getTitle():<{maxTitleLen}}  {movie.getDuration():<{maxDurationLen}}\n"
+        return movieStr
             
     def getTVList(self):
         # Return title and number of seasons of all shows
-        for item in self.__showDict:
+        
+        maxTitleLen = 0
+        maxDurationLen = 0
+        
+        shows = []
+        for item in self.__showDict.values():
             if item.getShow() == "TV Show":
-                print(item.getTitle(), item.getDuration())
+                shows.append(item)
+        
+        for show in shows:
+            titleLen = len(show.getTitle())
+            durationLen = len(show.getDuration())
+            
+            maxTitleLen = max(maxTitleLen, titleLen)
+            maxDurationLen = max(maxDurationLen, durationLen)
+        showStr = f"{'Title':<{maxTitleLen}}  {'Seasons:':<{maxDurationLen}}\n" 
+        
+        for show in shows:
+            showStr += f"{show.getTitle():<{maxTitleLen}}  {show.getDuration():<{maxDurationLen}}\n"
+        return showStr
 
     def getBookList(self):
+        maxTitleLen = 0
+        maxAuthorLen = 0
         # Return Title and author of all books
-        for item in self.__bookDict:
-            print(item.getTitle(), item.getAuthors())
+        
+        books = []
+        for item in self.__bookDict.values():
+                books.append(item)
+        
+        for book in books:
+            titleLen = len(book.getTitle())
+            authorLen = len(book.getAuthors())
+            
+            maxTitleLen = max(maxTitleLen, titleLen)
+            maxAuthorLen = max(maxAuthorLen, authorLen)
+        bookStr = f"{'Title':<{maxTitleLen}}  {'Author:':<{maxAuthorLen}}\n" 
+        
+        for book in books:
+            bookStr += f"{book.getTitle():<{maxTitleLen}}  {book.getAuthors():<{maxAuthorLen}}\n"
+        return bookStr
             
     def getMovieStats(self):
         ratingDict = {}
@@ -411,7 +460,6 @@ class Recommender():
                 bookRec += f"{book.getTitle():<{maxTitleLen}}  {book.getAuthors():<{maxAuthorLen}}\n"    
            return bookRec
            
-           
         elif typeOf in ["Book"]:
            maxTitleLen = 0
            maxDirectorLen = 0
@@ -462,12 +510,18 @@ def main():
     recommender = Recommender()
     recommender.loadBooks()
     recommender.loadShows()
-    recommender.loadAssociations()
-    result = recommender.getRecommendations(typeOf="TV Show", title="Swamp People")
-    result2 = recommender.getRecommendations(typeOf="Book", title="The Hotel New Hampshire")
+    # recommender.loadAssociations()
+    #result = recommender.getRecommendations(typeOf="TV Show", title="Swamp People")
+    #result2 = recommender.getRecommendations(typeOf="Book", title="The Hotel New Hampshire")
+    TVList = recommender.getTVList()
+    MovieList = recommender.getMovieList()
+    BookList = recommender.getBookList()
+    print(TVList)
+    print(MovieList)
+    print(BookList)
     # result = recommender.searchBooks(title="",author="Frank Herbert",publisher="")
-    print(result)
-    print(result2)
+    #print(result)
+    #print(result2)
     
 
 if __name__ == "__main__":
