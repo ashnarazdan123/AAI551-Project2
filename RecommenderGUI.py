@@ -65,7 +65,7 @@ class RecommenderGUI:
         self.__entryActor = tkinter.Entry(self.__searchTVM, width=50)
         self.__genreLabel = tkinter.Label(self.__searchTVM, text="Genre:")
         self.__entryGenreTVM = tkinter.Entry(self.__searchTVM, width=50)
-        self.__buttonTVM = tkinter.Button(self.__searchTVM, text="Search", padx=7) #,command=self.searchShows
+        self.__buttonTVM = tkinter.Button(self.__searchTVM, text="Search", padx=7,command=self.searchShows)
 
         #packing for search tv/movies
         self.__typeLabel.grid(row=0, column=0, sticky=tkinter.W)
@@ -94,7 +94,7 @@ class RecommenderGUI:
         self.__entryAuthor = tkinter.Entry(self.__searchB, width=50)
         self.__publisherLabel = tkinter.Label(self.__searchB, text="Publisher:")
         self.__entryPublisher = tkinter.Entry(self.__searchB, width=50)
-        self.__buttonB = tkinter.Button(self.__searchB, text="Search", padx=7) # ,command=self.searchBooks
+        self.__buttonB = tkinter.Button(self.__searchB, text="Search", padx=7, command=self.searchBooks)
 
         #packing for search books
         self.__titleLabelB.grid(row=0, column=0, sticky=tkinter.W)
@@ -124,7 +124,7 @@ class RecommenderGUI:
         self.__cbR.grid(row=0, column=1, sticky=tkinter.W)
         self.__titleLabelR.grid(row=1, column=0, sticky=tkinter.W)
         self.__entryTitleR.grid(row=1, column=1, sticky=tkinter.W)
-        self.__buttonR.grid(row=2, column=1, sticky=tkinter.W)  # ,command=self.searchBooks
+        self.__buttonR.grid(row=2, column=1, sticky=tkinter.W)
         self.__textR.grid(row=3, column=1, sticky="nsew")
         self.__recTab.grid_rowconfigure(3, weight=1)
         self.__recTab.grid_columnconfigure(1, weight=1)
@@ -140,7 +140,7 @@ class RecommenderGUI:
         self.__buttonLR.pack(side=tkinter.LEFT,padx=80)
         self.__buttonInfo = tkinter.Button(self.__buttonFrame, text="Information", command=self.creditInfoBox)
         self.__buttonInfo.pack(side=tkinter.LEFT, padx=80)
-        self.__buttonQ = tkinter.Button(self.__buttonFrame, text="Quit", command=self.__main_window.destroy)
+        self.__buttonQ = tkinter.Button(self.__buttonFrame, text="Quit", command=self.quitButton)
         self.__buttonQ.pack(side=tkinter.LEFT, padx=80)
 
         #default text and configure state of text
@@ -150,7 +150,9 @@ class RecommenderGUI:
             widget.insert("1.0", self.__defaultText)
             widget.configure(state=tkinter.DISABLED)
 
-
+    def quitButton(self):
+        self.__main_window.destroy()
+        exit()
     def loadShows(self):
         shows = self.__rec.loadShows()
         movieList = self.__rec.getMovieList()
@@ -201,9 +203,28 @@ Completed on 5/5/2024.""")
 
 
     def searchShows(self):
-        return
+        type = self.__cbTVM.get()
+        title = self.__entryTitleTVM.get()
+        director = self.__entryDirector.get()
+        actor = self.__entryActor.get()
+        genre = self.__entryGenreTVM.get()
+        tvmovieSearchList = self.__rec.searchTVMovies(type,title,director,actor,genre)
+        self.__textTVM.configure(state=NORMAL)
+        self.__textTVM.delete("1.0",tkinter.END)
+        self.__textTVM.insert(tkinter.END,tvmovieSearchList)
+        self.__textTVM.configure(state=DISABLED)
+
     def searchBooks(self):
-        return
+        title = self.__entryTitleB.get()
+        author = self.__entryAuthor.get()
+        pub = self.__entryPublisher.get()
+        bookSearchList = self.__rec.searchBooks(title,author,pub)
+        self.__stextB.configure(state=NORMAL)
+        self.__stextB.delete("1.0",tkinter.END)
+        self.__stextB.insert(tkinter.END,bookSearchList)
+        self.__stextB.configure(state=DISABLED)
+
+
     def getRecommendations(self):
         title = self.__entryTitleR.get()
         typeOf = self.__cbR.get() 
