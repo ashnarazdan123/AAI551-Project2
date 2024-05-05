@@ -514,6 +514,7 @@ class Recommender():
            maxTitleLen = 0
            maxAuthorLen = 0
            showTitleList = []
+           bookRec = ""
            # search show dictionary
            for show in self.__showDict.values():
                showTitleList.append(show.getTitle().lower())
@@ -544,10 +545,19 @@ class Recommender():
 
                 maxTitleLen = max(maxTitleLen, titleLen)
                 maxAuthorLen = max(maxAuthorLen, authorLen)
-                
-           bookRec = f"{'Title':<{maxTitleLen}}  {'Author':<{maxAuthorLen}}\n"
+    
            for book in assocList:
-                bookRec += f"{book.getTitle():<{maxTitleLen}}  {book.getAuthors():<{maxAuthorLen}}\n"    
+                bookRec += f"""Title: {book.getTitle()}  
+Author: {book.getAuthors()}
+Average Rating: {book.getAvgRating()}
+ISBN: {book.getIsbn()}
+ISBN13: {book.getIsbn13()}
+Language Code: {book.getLangCode()}
+Pages: {book.getNumPages()}
+Rating Count: {book.getNumRatings()}
+Publication Date: {book.getPubDate()}
+Publisher: {book.getPublisher()}
+*****************\n"""    
            return bookRec
            
         elif typeOf in ["Book"]:
