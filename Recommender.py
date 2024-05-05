@@ -10,6 +10,7 @@ class Recommender():
          self.__associationsDict = {}
 
     def loadBooks(self):
+        self.__bookDict = {} #Clear book dictionary before loading new books
         root = tkinter.Tk()
         root.withdraw()
         
@@ -27,14 +28,18 @@ class Recommender():
                                 print("Invalid format in line:", line)
                                 tkinter.messagebox.showerror("Error", "Invalid Books File")
                                 break
-                            newBook = Book(line[0], line[1], line[3], line[2], line[4], line[5], line[6], line[7], line[8], line[9], line[10])
-                            self.__bookDict[newBook.getId()] = newBook
+                            if line[0] == "bookID":
+                                continue
+                            else:
+                                newBook = Book(line[0], line[1], line[3], line[2], line[4], line[5], line[6], line[7], line[8], line[9], line[10])
+                                self.__bookDict[newBook.getId()] = newBook
                     file.close()
                     break
                 except FileNotFoundError:
                     print("File not found.")
                     continue
     def loadShows(self):
+        self.__showDict = {} # Clear the dictionary before loading new shows
         root = tkinter.Tk()
         root.withdraw()
         
@@ -61,6 +66,7 @@ class Recommender():
                     continue
 
     def loadAssociations(self):
+        self.__associationsDict = {} #Clear associations dictionary before loading new one
         root = tkinter.Tk()
         root.withdraw()
         

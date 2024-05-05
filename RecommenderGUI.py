@@ -163,7 +163,7 @@ class RecommenderGUI:
         exit()
 
     def loadShows(self):
-        shows = self.__rec.loadShows()
+        self.__rec.loadShows()
         movieList = self.__rec.getMovieList()
         tvList = self.__rec.getTVList()
         movieRatings = self.__rec.getMovieRatings()
@@ -172,6 +172,7 @@ class RecommenderGUI:
         self.createTVRatings(tvRatings)
 
         #movies
+        
         self.__textM.configure(state=NORMAL)
         self.__textM.delete("1.0", tkinter.END)
         self.__textM.insert(tkinter.END, movieList)
@@ -205,7 +206,6 @@ class RecommenderGUI:
             
             canvas = FigureCanvasTkAgg(fig, master=self.__ratingsTab)
             canvas.draw()
-            canvas.get_tk_widget().pack(side=tkinter.LEFT, padx=80)
         else:
             print("No movie ratings data available.")
 
@@ -222,7 +222,7 @@ class RecommenderGUI:
             
             canvas = FigureCanvasTkAgg(fig, master=self.__ratingsTab)
             canvas.draw()
-            canvas.get_tk_widget().pack(side=tkinter.LEFT, padx=80)
+
             
         else:
             print("No TV show ratings data available.")
